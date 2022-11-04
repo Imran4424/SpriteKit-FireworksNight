@@ -118,4 +118,57 @@ class GameScene: SKScene {
             break
         }
     }
+    
+    func checkTouches(_ touches: Set<UITouch>) {
+        guard let touch = touches.first else {
+            print("no touch found")
+            return
+        }
+        
+        let location = touch.location(in: self)
+        let nodesAtPoint = nodes(at: location)
+        
+        for case let node as SKSpriteNode in nodesAtPoint {
+            guard node.name == "firework" else {
+                print("node is not a firework name")
+                continue
+            }
+            
+            for parent in fireworks {
+                guard let firework = parent.children.first as? SKSpriteNode else {
+                    print("firework casting failed")
+                    continue
+                }
+                
+                if firework.name == "selected" && firework.color != node.color {
+                    // backtracking
+                    firework.name = "firework"
+                    firework.colorBlendFactor = 1
+                }
+            }
+            
+            node.name = "selected"
+            node.colorBlendFactor = 0
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        checkTouches(touches)
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesMoved(touches, with: event)
+        checkTouches(touches)
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+        // two variable for in loop
+        for (index, firework) in fireworks.enumerated().reversed() {
+            if firework.position.y > 900 {
+                fireworks.remove(at: index)
+                firework.removeFromParent()
+            }
+        }
+    }
 }
