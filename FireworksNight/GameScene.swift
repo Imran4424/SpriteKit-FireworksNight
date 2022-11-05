@@ -11,11 +11,13 @@ class GameScene: SKScene {
     var gameTimer: Timer!
     var fireworks = [SKNode]()
     var scoreLabel: SKLabelNode!
+    var gameOverLabel: SKLabelNode!
     
     let leftEdge = -22
     let bottomEdge = -22
     let rightEdge = 1024 + 22
     
+    var numOfLaunches = 0
     var score = 0 {
         didSet {
             scoreLabel.text =  "Score: \(score)"
@@ -81,6 +83,26 @@ class GameScene: SKScene {
     }
     
     @objc func launchFireworks() {
+        numOfLaunches += 1
+        
+        if numOfLaunches > 25 {
+            gameTimer.invalidate()
+            
+            // screen size of current device
+            let screenSize: CGRect = UIScreen.main.bounds
+            
+            gameOverLabel = SKLabelNode(fontNamed: "Chalkduster")
+            gameOverLabel.position = CGPoint(x: screenSize.width / 2, y: screenSize.height / 2)
+            gameOverLabel.verticalAlignmentMode = .center
+            gameOverLabel.horizontalAlignmentMode = .center
+            gameOverLabel.zPosition = 1
+            gameOverLabel.fontSize = 75
+            gameOverLabel.text = "Game Over!!!"
+            addChild(gameOverLabel)
+            
+            return
+        }
+        
         let movementAmount: CGFloat = 1800
         
         switch Int.random(in: 0...3) {
