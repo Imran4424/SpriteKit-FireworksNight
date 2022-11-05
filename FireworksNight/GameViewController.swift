@@ -42,4 +42,19 @@ class GameViewController: UIViewController {
     override var prefersStatusBarHidden: Bool {
         return true
     }
+    
+    // shake gesture
+    override func motionBegan(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        guard let skView = view as? SKView else {
+            print("not SKView")
+            return
+        }
+        
+        guard let gameScene = skView.scene as? GameScene else {
+            print("Not game scene")
+            return
+        }
+        
+        gameScene.explodeFireworks()
+    }
 }
